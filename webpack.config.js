@@ -29,7 +29,7 @@ module.exports = (env, argv) => {
     const isProduction = mode === 'production'
     return {
         output: {
-            filename: isProduction ? '[name].[contenthash].js' : 'main.js',
+           /*  filename: isProduction ? '[name].[contenthash].js' : 'main.js', */
             /* path: path.resolve(__dirname, 'build') */
         },
         plugins: [
