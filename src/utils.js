@@ -1,1 +1,0 @@
-export function sayHi() {console.log('Hola')}
