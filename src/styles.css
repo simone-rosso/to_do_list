@@ -1,0 +1,50 @@
+body {
+    background-color: #cacaca;
+    color: #089;
+    font-family: cursive
+}
+
+ul {
+    padding: 0;
+}
+
+#app-container {
+    margin: auto;
+    width: 50%;
+    border: 3px solid #089;
+    padding: 10px;
+}
+
+.prompt {
+    display: flex;
+    justify-content: space-evenly;
+    width: 50%;
+    margin: auto;
+}
+
+#title {
+    text-align: center;
+}
+
+button {
+    border: none;
+    color: white;
+    border-radius: 5px;
+    background-color: #008CBA;
+}
+
+button:disabled {
+    background-color: rgba(239, 239, 239, 0.3) !important
+}
+
+.task {
+    display: grid;
+    grid-auto-flow: column;
+    grid-template-columns: 2fr 2fr 1fr 1fr 1fr;
+    gap: 5px;
+    align-items: end;
+    padding: 15px 20px;
+    background-color: #ede8e8;
+    margin: 10px 0;
+    border-radius: 6px;
+}
