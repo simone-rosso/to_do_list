@@ -5,7 +5,7 @@
   "main": "index.js",
   "scripts": {
     "test": "test",
-    "build": "webpack --mode=develop",
+    "build": "webpack --mode=development",
     "deploy_dev": "webpack --mode=development",
     "dev": "webpack serve --mode=development"
   },
