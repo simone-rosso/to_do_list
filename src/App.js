@@ -2,10 +2,14 @@ import { useState, useEffect } from 'react'
 import { initializeApp } from "firebase/app";
 import { collection, getDocs, addDoc, getFirestore, deleteDoc, doc } from "firebase/firestore";
 
-import Stack from '@mui/material/Stack';
-import Button from '@mui/material/Button';
-import Typography from '@mui/material/Typography';
-import TextField from '@mui/material/TextField';
+
+import { Button, TextField, Typography, Stack, IconButton } from '@mui/material';
+import Edit from '@mui/icons-material/Edit';
+import Delete from '@mui/icons-material/Delete';
+import Save from '@mui/icons-material/Save';
+import TaskAlt from '@mui/icons-material/TaskAlt';
+import Done from '@mui/icons-material/Done';
+import PauseCircleOutline from '@mui/icons-material/PauseCircleOutline';
 
 const FIRESTORE_CONFIG = {
     "type": "service_account",
@@ -39,7 +43,6 @@ const App = () => {
     const getItemsFromDB = async () => {
         try {
             const querySnapshot = await getDocs(collection(db, "list_items"));
-            console.log(querySnapshot)
             const data = querySnapshot._snapshot.docChanges
             const parsedData = data.map((d) => ({
                 isCompleted: d.doc.data.value.mapValue.fields.isCompleted.booleanValue,
@@ -109,26 +112,30 @@ const App = () => {
 
     const Item = ({ item: { timestamp, text, isCompleted, isEdit, id } }) => (
         <li className="task">
-            {isEdit ? <TextField variant="standard" size="small" type='text' onChange={(e) => onEditItem(e, timestamp)} value={text} autoFocus/> : <Typography onClick={() => onToggleKey(timestamp, 'isEdit')}>{text}</Typography >}
-            <Typography style={{ color: isCompleted ? 'green' : 'red' }}>{isCompleted ? 'Done!' : 'To Do'}</Typography >
-            <Button size="small" variant="contained" onClick={() => onToggleKey(timestamp, 'isEdit')}>{isEdit ? 'Accept' : 'Edit'}</Button>
-            <Button size="small" variant="contained" onClick={() => onDeleteItem(timestamp, id)}>Delete</Button>
-            <Button size="small" variant="contained" onClick={() => onToggleKey(timestamp, 'isCompleted')}>{isCompleted ? 'To Do' : 'Done'}</Button>
-            <Button size="small" variant="contained" onClick={() => {
-                !!id
-                    ? updateItem({ timestamp, text, isCompleted, isEdit, id })
-                    : pushItemToDB({ timestamp, text, isCompleted, isEdit })
-            }}>{!!id ? "Update" : "Save"}</Button>
-        </li>
+            {isEdit ? <TextField variant="standard" size="small" type='text' onChange={(e) => onEditItem(e, timestamp)} value={text} autoFocus /> : <Typography style={{ textDecoration: `${isCompleted ? 'line-through' : 'none'}` }} onClick={() => onToggleKey(timestamp, 'isEdit')}>{text}</Typography >}
+            <Typography style={{
+                color: isCompleted ? 'green' : 'red', textAlign: 'center'
+            }}>{isCompleted ? <TaskAlt /> : 'To Do'}</Typography >
+            <div className='actions'>
+                <IconButton tilte={isCompleted ? 'mark as to do' : 'mark is done'} size="small" variant="contained" onClick={() => onToggleKey(timestamp, 'isCompleted')}>{isCompleted ? <PauseCircleOutline /> : <Done />}</IconButton>
+                <IconButton title='Edit' size="small" onClick={() => onToggleKey(timestamp, 'isEdit')}>{isEdit ? 'Accept' : <Edit />}</IconButton>
+                <IconButton title='delete' size="small" variant="contained" onClick={() => onDeleteItem(timestamp, id)}><Delete /></IconButton>
+                <IconButton title='save changes' size="small" variant="contained" onClick={() => {
+                    !!id
+                        ? updateItem({ timestamp, text, isCompleted, isEdit, id })
+                        : pushItemToDB({ timestamp, text, isCompleted, isEdit })
+                }}>{<Save />}</IconButton>
+            </div>
+        </li >
     )
 
     return (
         <div id="app-container">
-            <Typography variant='h4' id='title' style={{ margin: '10px 0' }}>My To-Do App</Typography >
-            <div >
+            <Typography variant='h4' id='title' style={{ margin: '10px 0 30px', color: '#1976d2' }}>Today I will do:</Typography >
+            <div style={{ margin: '10px 0 30px' }}>
                 <form name="loginBox" target="#here" method="post" className="prompt">
-                    <TextField size="small" type='text' value={value} onChange={(e) => setValue(e.target.value)} />
-                    <Button variant="contained" disabled={value === ''} onClick={onAddItem}>add item</Button>
+                    <TextField placeholder="Today I want to..." size="small" type='text' value={value} onChange={(e) => setValue(e.target.value)} />
+                    <Button variant="contained" disabled={value === ''} onClick={onAddItem}>add task</Button>
                     <input type="submit" style={{ position: "absolute", left: '-9999px' }} />
                 </form>
             </div>
@@ -150,3 +157,6 @@ export default App
 
 // Bugs -> on edit value
 // Hide firebase config
+// tooltips
+// mobile
+// estilo
