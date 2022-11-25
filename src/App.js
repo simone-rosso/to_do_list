@@ -1,8 +1,8 @@
-import { useState } from 'react'
+import { useState, useEffect } from 'react'
 import { initializeApp } from "firebase/app";
-import { getFirestore } from "firebase/firestore";
+import { collection, getDocs, addDoc, getFirestore, deleteDoc, doc } from "firebase/firestore";
 
-const FIREBASE_CONFIG = {
+const FIRESTORE_CONFIG = {
     "type": "service_account",
     "projectId": "todolistsimone",
     "private_key_id": "a1a27427beea6a0759480742fe4ede6e4695155b",
@@ -16,8 +16,7 @@ const FIREBASE_CONFIG = {
 }
 
 // Initialize Firebase
-const app = initializeApp(FIREBASE_CONFIG);
-
+const app = initializeApp(FIRESTORE_CONFIG);
 // Initialize Cloud Firestore and get a reference to the service
 const db = getFirestore(app);
 
@@ -25,16 +24,65 @@ const App = () => {
     const [items, setItems] = useState([])
     const [value, setValue] = useState('')
 
-    const DEFAULT_ITEM = { text: value, timestamp: new Date(), isCompleted: false, isEdit: false }
+    const DEFAULT_ITEM = {
+        text: value,
+        timestamp: new Date(),
+        isCompleted: false,
+        isEdit: false
+    }
+
+    const getItemsFromDB = async () => {
+        try {
+            const querySnapshot = await getDocs(collection(db, "list_items"));
+            console.log(querySnapshot)
+            const data = querySnapshot._snapshot.docChanges
+            const parsedData = data.map((d) => ({
+                isCompleted: d.doc.data.value.mapValue.fields.isCompleted.booleanValue,
+                isEdit: d.doc.data.value.mapValue.fields.isEdit.booleanValue,
+                text: d.doc.data.value.mapValue.fields.text.stringValue,
+                timestamp: d.doc.data.value.mapValue.fields.timestamp.timestampValue,
+                id: d.doc.key.path.segments[6]
+            }))
+            return parsedData
+        } catch (e) { console.warn(e) }
+    }
+
+    const setItemsToDB = async () => {
+        try {
+            const docRef = await addDoc(collection(db, "list_items"), {
+                text: "Simon",
+                isEdit: false,
+                isCompleted: true,
+                timestamp: new Date()
+            });
+
+            console.log("Document written with ID: ", docRef.id);
+        } catch (e) {
+            console.error("Error adding document: ", e);
+        }
+    }
+
+    useEffect(() => {
+        getItemsFromDB().then(parsedData => setItems(parsedData))
+
+    }, [])
 
     const onAddItem = (e) => {
         setItems(items.concat(DEFAULT_ITEM))
         setValue('')
     }
 
-    const onDeleteItem = (timestamp) => {
-        const filteredItems = items.filter((i) => i.timestamp !== timestamp)
-        setItems(filteredItems)
+    const onDeleteItem = async (timestamp, id) => {
+        try {
+            if (!!id) await deleteDoc(doc(db, "list_items", id))
+            const filteredItems = items.filter((i) => i.timestamp !== timestamp)
+
+            setItems(filteredItems)
+        }
+        catch (e) {
+            alert("An error ocurred deleting the item: ", e)
+            console.warn(e)
+        }
     }
 
     const onToggleKey = (timestamp, key) => {
@@ -59,12 +107,12 @@ const App = () => {
 
     const onSaveItems = {}
 
-    const Item = ({ item: { timestamp, text, isCompleted, isEdit } }) => (
+    const Item = ({ item: { timestamp, text, isCompleted, isEdit, id } }) => (
         <li className="task">
             {isEdit ? <input type='text' onChange={(e) => onEditItem(e, timestamp)} value={text} autoFocus></input> : <span>{text}</span>}
             <span style={{ color: isCompleted ? 'green' : 'red' }}>{isCompleted ? 'Done!' : 'To Do'}</span>
             <button onClick={() => onToggleKey(timestamp, 'isEdit')}>{isEdit ? 'Accept' : 'Edit'}</button>
-            <button onClick={() => onDeleteItem(timestamp)}>Delete</button>
+            <button onClick={() => onDeleteItem(timestamp, id)}>Delete</button>
             <button onClick={() => onToggleKey(timestamp, 'isCompleted')}>{isCompleted ? 'To Do' : 'Done'}</button>
         </li>
     )
@@ -80,9 +128,10 @@ const App = () => {
                 </form>
             </div>
             {items
-                ? <ul>
+                ? <><ul>
                     {items.map((item) => <Item item={item} key={item.timestamp} />)}
                 </ul>
+                    <button onClick={() => setItemsToDB()}>Save</button></>
                 : null
             }
         </div>

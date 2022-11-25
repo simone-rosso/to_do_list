@@ -46,6 +46,6 @@ module.exports = (env, argv) => {
             open: true,
             port: 3000
         },
-        devtool: 'cheap-module-source-map'
+    /*     devtool: 'cheap-module-source-map' */
     }
 }
