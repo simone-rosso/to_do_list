@@ -1,7 +1,6 @@
 body {
-    background-color: #e8f0fe;
-    color: #089;
-    font-family: cursive
+    background-color: #d1c4e9;
+    color: #a094b7;
 }
 
 ul {
@@ -11,7 +10,6 @@ ul {
 #app-container {
     margin: auto;
     width: 50%;
-    border: 3px solid #089;
     padding: 10px;
 }
 
@@ -24,17 +22,6 @@ ul {
 
 #title {
     text-align: center;
-}
-
-button {
-    border: none;
-    color: white;
-    border-radius: 5px;
-    background-color: #008CBA;
-}
-
-button:disabled {
-    background-color: rgba(239, 239, 239, 0.3) !important
 }
 
 .task {

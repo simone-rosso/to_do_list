@@ -2,6 +2,11 @@ import { useState, useEffect } from 'react'
 import { initializeApp } from "firebase/app";
 import { collection, getDocs, addDoc, getFirestore, deleteDoc, doc } from "firebase/firestore";
 
+import Stack from '@mui/material/Stack';
+import Button from '@mui/material/Button';
+import Typography from '@mui/material/Typography';
+import TextField from '@mui/material/TextField';
+
 const FIRESTORE_CONFIG = {
     "type": "service_account",
     "projectId": "todolistsimone",
@@ -47,15 +52,9 @@ const App = () => {
         } catch (e) { console.warn(e) }
     }
 
-    const setItemsToDB = async () => {
+    const pushItemToDB = async (item) => {
         try {
-            const docRef = await addDoc(collection(db, "list_items"), {
-                text: "Simon",
-                isEdit: false,
-                isCompleted: true,
-                timestamp: new Date()
-            });
-
+            const docRef = await addDoc(collection(db, "list_items"), item);
             console.log("Document written with ID: ", docRef.id);
         } catch (e) {
             console.error("Error adding document: ", e);
@@ -64,7 +63,6 @@ const App = () => {
 
     useEffect(() => {
         getItemsFromDB().then(parsedData => setItems(parsedData))
-
     }, [])
 
     const onAddItem = (e) => {
@@ -83,6 +81,10 @@ const App = () => {
             alert("An error ocurred deleting the item: ", e)
             console.warn(e)
         }
+    }
+
+    const updateItem = () => {
+        console.log('to update')
     }
 
     const onToggleKey = (timestamp, key) => {
@@ -105,33 +107,38 @@ const App = () => {
         setItems(auxItems)
     }
 
-    const onSaveItems = {}
-
     const Item = ({ item: { timestamp, text, isCompleted, isEdit, id } }) => (
         <li className="task">
-            {isEdit ? <input type='text' onChange={(e) => onEditItem(e, timestamp)} value={text} autoFocus></input> : <span>{text}</span>}
-            <span style={{ color: isCompleted ? 'green' : 'red' }}>{isCompleted ? 'Done!' : 'To Do'}</span>
-            <button onClick={() => onToggleKey(timestamp, 'isEdit')}>{isEdit ? 'Accept' : 'Edit'}</button>
-            <button onClick={() => onDeleteItem(timestamp, id)}>Delete</button>
-            <button onClick={() => onToggleKey(timestamp, 'isCompleted')}>{isCompleted ? 'To Do' : 'Done'}</button>
+            {isEdit ? <TextField variant="standard" size="small" type='text' onChange={(e) => onEditItem(e, timestamp)} value={text} autoFocus/> : <Typography onClick={() => onToggleKey(timestamp, 'isEdit')}>{text}</Typography >}
+            <Typography style={{ color: isCompleted ? 'green' : 'red' }}>{isCompleted ? 'Done!' : 'To Do'}</Typography >
+            <Button size="small" variant="contained" onClick={() => onToggleKey(timestamp, 'isEdit')}>{isEdit ? 'Accept' : 'Edit'}</Button>
+            <Button size="small" variant="contained" onClick={() => onDeleteItem(timestamp, id)}>Delete</Button>
+            <Button size="small" variant="contained" onClick={() => onToggleKey(timestamp, 'isCompleted')}>{isCompleted ? 'To Do' : 'Done'}</Button>
+            <Button size="small" variant="contained" onClick={() => {
+                !!id
+                    ? updateItem({ timestamp, text, isCompleted, isEdit, id })
+                    : pushItemToDB({ timestamp, text, isCompleted, isEdit })
+            }}>{!!id ? "Update" : "Save"}</Button>
         </li>
     )
 
     return (
         <div id="app-container">
-            <h1 id='title'>My ToDo App</h1>
+            <Typography variant='h4' id='title' style={{ margin: '10px 0' }}>My To-Do App</Typography >
             <div >
                 <form name="loginBox" target="#here" method="post" className="prompt">
-                    <input type='text' value={value} onChange={(e) => setValue(e.target.value)} />
-                    <button disabled={value === ''} onClick={onAddItem}>add item</button>
+                    <TextField size="small" type='text' value={value} onChange={(e) => setValue(e.target.value)} />
+                    <Button variant="contained" disabled={value === ''} onClick={onAddItem}>add item</Button>
                     <input type="submit" style={{ position: "absolute", left: '-9999px' }} />
                 </form>
             </div>
             {items
-                ? <><ul>
-                    {items.map((item) => <Item item={item} key={item.timestamp} />)}
-                </ul>
-                    <button onClick={() => setItemsToDB()}>Save</button></>
+                ? <>
+                    <ul>
+                        {items.map((item) => <Item item={item} key={item.timestamp} />)}
+                    </ul>
+                    {/*    <Button onClick={() => setItemsToDB()}>Save</Button> */}
+                </>
                 : null
             }
         </div>
@@ -140,3 +147,6 @@ const App = () => {
 
 
 export default App
+
+// Bugs -> on edit value
+// Hide firebase config
