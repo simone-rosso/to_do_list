@@ -1,4 +1,5 @@
 const HtmlWebpackPlugin = require('html-webpack-plugin')
+const webpack = require('webpack')
 const path = require('path')
 
 const ruleForJavascript = {
@@ -33,7 +34,10 @@ module.exports = (env, argv) => {
             path: path.resolve(__dirname, 'build')
         },
         plugins: [
-            new HtmlWebpackPlugin({ template: 'src/index.html' })
+            new HtmlWebpackPlugin({ template: 'src/index.html' }),
+            new webpack.DefinePlugin({
+                process: { env: {} }
+            })
         ],
         module: {
             rules
@@ -41,6 +45,7 @@ module.exports = (env, argv) => {
         devServer: {
             open: true,
             port: 3000
-        }
+        },
+        devtool: 'cheap-module-source-map'
     }
 }
