@@ -2,27 +2,16 @@ import { useState, useEffect } from 'react'
 import { initializeApp } from "firebase/app";
 import { collection, getDocs, addDoc, getFirestore, deleteDoc, doc } from "firebase/firestore";
 
+import { FIRESTORE_CONFIG } from '../config/firestore.config'
 
-import { Button, TextField, Typography, Stack, IconButton } from '@mui/material';
+
+import { Button, TextField, Typography, Stack, IconButton, Grid } from '@mui/material';
 import Edit from '@mui/icons-material/Edit';
 import Delete from '@mui/icons-material/Delete';
 import Save from '@mui/icons-material/Save';
 import TaskAlt from '@mui/icons-material/TaskAlt';
 import Done from '@mui/icons-material/Done';
 import PauseCircleOutline from '@mui/icons-material/PauseCircleOutline';
-
-const FIRESTORE_CONFIG = {
-    "type": "service_account",
-    "projectId": "todolistsimone",
-    "private_key_id": "a1a27427beea6a0759480742fe4ede6e4695155b",
-    "private_key": "-----BEGIN PRIVATE KEY-----\nMIIEvAIBADANBgkqhkiG9w0BAQEFAASCBKYwggSiAgEAAoIBAQC3+fAHt/Stxj5b\nzVMlVimj/vdEJiq/EXVzgMvNjVq89WPEnjYtAWNSvWYqUmYK57SrFQxxtJeBIUTg\nGqDCilKwzPCLUUODoJ5eHkggAjZKdJuXZmQC8Iuoi83oI4Kk3pe/sSIy9XnAj9Qc\n50O7fFdzCM6kBnRjpdANqBbMKAvXLGAKk6Bl/CadqroZp7c1IIp96vAoXvp16oC3\n8WqEyfeXVu93B7wDIwuiC7gEitZkzyeDFjClr5vwHV56n0/DUUm8OF8UkxuzhyOQ\n0J1r2VKeB7LJu/OzxUpEM79oDWt0sWXCIPnl41pNLFM+5QPRWuRuxQpWA2ihDBGu\nrpni8943AgMBAAECggEARi/1uVQeZi9z+dz25A8fmr+6QMcY1sUH3HVeC0DqxZ0O\nn2PGglv9swKr1+iQoodsPzqsATMm+64gEylFfIJ98pJ1EImDqtNbp8eAt6lwYe5j\nr5px/Ecd2MLhXrcxb8m19f1TcUKCXQriHtbB2eShjjLlduE5hQyst5ERhXifr8pI\nVIpV4nFZNOch+JL/5HxyJUbwHHKJzsGYSO1CF0ty5Tm8WMilGuzp22JzfYZwewsL\n9ThgHMrQ6KqXmQ9q3ofOPn3U3xnbdY6K1NbIEUWlObtbAsXJbEdayKN+U1tB90Yv\nPXrZvYq+WwoiiRDmbmExl6tpn6xCJOF9loUj0Vc8AQKBgQD6ygBg86hULV+NsM1E\nfIlm2vlFA3kHAD0KfJlnI6cQjncCOVyj3eVyzJIx7rJPciK77t/QUF+3/hIoIULM\nfIB9HDH3ucrvdBUcmCSZ927eQ6tDQTS9ugf6oLh+WJaBxoG8GmIAE7GpQfd0XRlQ\nz7qXpn6Yx3n9nY2mNb0UPYaiNwKBgQC7zIugLS0WIY1tElwgBq9JVtjbAzSS0OsI\nk8hTCHN3RkLa3zlfA4nw6BDGc/FWC/lHcq/EJWzULXnWLDzxDzin0ruWxFKsw2KF\nfZFLvHsOmWq/TcoLM5jcFOKxmojX1BQ/afksBMznv2rv0LKAS4JkZRHWfJLe1zQp\ndi6EbY6kAQKBgB16FrdOjE9wkdWenVHabW/4duoEsXoALiyIXqN/zkgk5poNUfU0\nxJ5MqzZRPwYVfT2nowjiGY4Pv+SVnDtauuN5p+ndHZwtgbm9rDeonJBlVcDu7hsK\nvZtYvrajBPW19lO8qh4mMnCZf1NfCfW0pNLkT+b3M0B6/0Y09MdnP+bbAoGAJJ8i\nqz2kCSjJ13c5F9W14OtapnrdibPL4YRQEEEZoyzEZMIbAfhCsgPPIaQCb/Etz00C\nEZHqwwWLOMSvraJ2PePOSPxH0wDW+YkfCFHc/V/VfTDCMaUCLgi0nEWyYcQtnqAf\nwwG8o4Skadect4ACEWnULKtmSKZWua8eKxziMAECgYA3IIzC5axK8tgp5fsRSUR1\nY/5ZbMwaa/T0StggxkHxIULLTQRe5lSdsO4t86/gnN2XA2Facn+wXdubQ4HMmP3u\n7xn7ArHZ8RWV6lvupdxS8E9SHJ91cdvSwsp53Ry/vMtq8c+kGgi1lwRvE9uYmeFj\nvrfjwE2ethKtaet33DuDMQ==\n-----END PRIVATE KEY-----\n",
-    "client_email": "firebase-adminsdk-asnzp@todolistsimone.iam.gserviceaccount.com",
-    "client_id": "117066463371883539809",
-    "auth_uri": "https://accounts.google.com/o/oauth2/auth",
-    "token_uri": "https://oauth2.googleapis.com/token",
-    "auth_provider_x509_cert_url": "https://www.googleapis.com/oauth2/v1/certs",
-    "client_x509_cert_url": "https://www.googleapis.com/robot/v1/metadata/x509/firebase-adminsdk-asnzp%40todolistsimone.iam.gserviceaccount.com"
-}
 
 // Initialize Firebase
 const app = initializeApp(FIRESTORE_CONFIG);
@@ -112,20 +101,59 @@ const App = () => {
 
     const Item = ({ item: { timestamp, text, isCompleted, isEdit, id } }) => (
         <li className="task">
-            {isEdit ? <TextField variant="standard" size="small" type='text' onChange={(e) => onEditItem(e, timestamp)} value={text} autoFocus /> : <Typography style={{ textDecoration: `${isCompleted ? 'line-through' : 'none'}` }} onClick={() => onToggleKey(timestamp, 'isEdit')}>{text}</Typography >}
-            <Typography style={{
-                color: isCompleted ? 'green' : 'red', textAlign: 'center'
-            }}>{isCompleted ? <TaskAlt /> : 'To Do'}</Typography >
-            <div className='actions'>
-                <IconButton tilte={isCompleted ? 'mark as to do' : 'mark is done'} size="small" variant="contained" onClick={() => onToggleKey(timestamp, 'isCompleted')}>{isCompleted ? <PauseCircleOutline /> : <Done />}</IconButton>
-                <IconButton title='Edit' size="small" onClick={() => onToggleKey(timestamp, 'isEdit')}>{isEdit ? 'Accept' : <Edit />}</IconButton>
-                <IconButton title='delete' size="small" variant="contained" onClick={() => onDeleteItem(timestamp, id)}><Delete /></IconButton>
-                <IconButton title='save changes' size="small" variant="contained" onClick={() => {
-                    !!id
-                        ? updateItem({ timestamp, text, isCompleted, isEdit, id })
-                        : pushItemToDB({ timestamp, text, isCompleted, isEdit })
-                }}>{<Save />}</IconButton>
-            </div>
+            <Grid container
+                spacing={2}
+                wrap="nowrap"
+                direction="row"
+                justifyContent="flex-start"
+                alignItems="flex-end">
+                <Grid item md={10} xs={12} zeroMinWidth>
+                    {isEdit
+                        ? <TextField noWrap variant="standard" size="small" type='text' onChange={(e) => onEditItem(e, timestamp)} value={text} autoFocus />
+                        : <Typography noWrap style={{ textDecoration: `${isCompleted ? 'line-through' : 'none'}` }} onClick={() => onToggleKey(timestamp, 'isEdit')}>
+                            {text}
+                        </Typography >}
+                    <Typography style={{
+                        color: isCompleted ? 'green' : 'red', textAlign: 'center'
+                    }}>{isCompleted ? <TaskAlt /> : 'To Do'}</Typography >
+                </Grid>
+                <Grid item md={2} xs={12} zeroMinWidth>
+                    <IconButton
+                        disabled={isEdit}
+                        tilte={isCompleted ? 'mark as to do' : 'mark is done'}
+                        size="small"
+                        variant="contained"
+                        onClick={() => onToggleKey(timestamp, 'isCompleted')}>
+                        {isCompleted ? <PauseCircleOutline /> : <Done />}
+                    </IconButton>
+                    <IconButton
+                        title='Edit'
+                        size="small"
+                        onClick={() => onToggleKey(timestamp, 'isEdit')}>
+                        {isEdit ? <Done /> : <Edit />}
+                    </IconButton>
+                    <IconButton
+                        disabled={isEdit}
+                        title='delete'
+                        size="small"
+                        variant="contained"
+                        onClick={() => onDeleteItem(timestamp, id)}>
+                        <Delete />
+                    </IconButton>
+                    <IconButton
+                        disabled={isEdit}
+                        title='save changes'
+                        size="small"
+                        variant="contained"
+                        onClick={() => {
+                            !!id
+                                ? updateItem({ timestamp, text, isCompleted, isEdit, id })
+                                : pushItemToDB({ timestamp, text, isCompleted, isEdit })
+                        }}>{<Save />}
+                    </IconButton>
+                </Grid>
+            </Grid>
+
         </li >
     )
 
