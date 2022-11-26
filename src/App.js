@@ -5,13 +5,9 @@ import { collection, getDocs, addDoc, getFirestore, deleteDoc, doc } from "fireb
 import { FIRESTORE_CONFIG } from '../config/firestore.config'
 
 
-import { Button, TextField, Typography, Stack, IconButton, Grid } from '@mui/material';
-import Edit from '@mui/icons-material/Edit';
-import Delete from '@mui/icons-material/Delete';
-import Save from '@mui/icons-material/Save';
-import TaskAlt from '@mui/icons-material/TaskAlt';
-import Done from '@mui/icons-material/Done';
-import PauseCircleOutline from '@mui/icons-material/PauseCircleOutline';
+import { Container, TextField, Typography, Stack, IconButton, Grid } from '@mui/material';
+import { Edit, Delete, Save, TaskAlt, Done, Add, PauseCircleOutline } from '@mui/icons-material';
+
 
 // Initialize Firebase
 const app = initializeApp(FIRESTORE_CONFIG);
@@ -107,15 +103,27 @@ const App = () => {
                 direction="row"
                 justifyContent="flex-start"
                 alignItems="flex-end">
-                <Grid item md={10} xs={12} zeroMinWidth>
-                    {isEdit
-                        ? <TextField noWrap variant="standard" size="small" type='text' onChange={(e) => onEditItem(e, timestamp)} value={text} autoFocus />
-                        : <Typography noWrap style={{ textDecoration: `${isCompleted ? 'line-through' : 'none'}` }} onClick={() => onToggleKey(timestamp, 'isEdit')}>
-                            {text}
-                        </Typography >}
-                    <Typography style={{
-                        color: isCompleted ? 'green' : 'red', textAlign: 'center'
-                    }}>{isCompleted ? <TaskAlt /> : 'To Do'}</Typography >
+                <Grid container item md={10} xs={12} zeroMinWidth>
+                    <Grid item md={8} xs={12}>
+                        {isEdit
+                            ? <TextField
+                                noWrap
+                                variant="standard"
+                                size="small"
+                                type='text'
+                                onChange={(e) => onEditItem(e, timestamp)} value={text} autoFocus />
+                            : <Typography
+                                noWrap
+                                style={{ textDecoration: `${isCompleted ? 'line-through' : 'none'}` }}
+                                onClick={() => onToggleKey(timestamp, 'isEdit')}>
+                                {text}
+                            </Typography >}
+                    </Grid>
+                    <Grid item md={4} xs={12}>
+                        <Typography style={{
+                            color: isCompleted ? 'green' : 'red'
+                        }}>{isCompleted ? <TaskAlt /> : 'To Do'}</Typography >
+                    </Grid>
                 </Grid>
                 <Grid item md={2} xs={12} zeroMinWidth>
                     <IconButton
@@ -128,6 +136,7 @@ const App = () => {
                     </IconButton>
                     <IconButton
                         title='Edit'
+                        disabled={isCompleted}
                         size="small"
                         onClick={() => onToggleKey(timestamp, 'isEdit')}>
                         {isEdit ? <Done /> : <Edit />}
@@ -153,17 +162,30 @@ const App = () => {
                     </IconButton>
                 </Grid>
             </Grid>
-
         </li >
     )
 
     return (
         <div id="app-container">
-            <Typography variant='h4' id='title' style={{ margin: '10px 0 30px', color: '#1976d2' }}>Today I will do:</Typography >
+            <Typography variant='h4' id='title' style={{ margin: '10px 0 30px', color: '#1976d2' }}>
+                Today I will do:
+            </Typography >
             <div style={{ margin: '10px 0 30px' }}>
                 <form name="loginBox" target="#here" method="post" className="prompt">
-                    <TextField placeholder="Today I want to..." size="small" type='text' value={value} onChange={(e) => setValue(e.target.value)} />
-                    <Button variant="contained" disabled={value === ''} onClick={onAddItem}>add task</Button>
+                    <TextField
+                        placeholder="Today I want to..."
+                        size="small"
+                        type='text'
+                        value={value}
+                        onChange={(e) => setValue(e.target.value)}
+                    />
+                    <IconButton
+                        variant="contained"
+                        disabled={value === ''}
+                        onClick={onAddItem}
+                    >
+                        {<Add />}
+                    </IconButton>
                     <input type="submit" style={{ position: "absolute", left: '-9999px' }} />
                 </form>
             </div>
